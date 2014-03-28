@@ -1,0 +1,3 @@
+include ':bad', ':bad-sample'
+rootProject.name = 'bad-parent'
+

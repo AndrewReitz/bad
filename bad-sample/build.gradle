@@ -1,0 +1,11 @@
+apply plugin:'application'
+apply plugin: 'java'
+
+mainClassName = "com.andrewreitz.bad.sample.Main"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
