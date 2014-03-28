@@ -47,6 +47,7 @@ public class BadProcessor extends AbstractProcessor {
       Element enclosingElement = badAnnotatedElement.getEnclosingElement();
       switch (kind) {
         case CLASS:
+        case INTERFACE:
           logger.w(badAnnotatedElement.toString() + " contains some bad code. You may want to consider cleaning it up");
           break;
         case FIELD:
