@@ -1,7 +1,11 @@
 package com.andrewreitz.bad.sample;
 
+import com.andrewreitz.bad.Bad;
+
+@Bad
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
+  @Bad
+  public static void main(String[] args) {
+    System.out.println("Hello World!");
+  }
 }
