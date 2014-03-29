@@ -21,12 +21,15 @@ import static javax.tools.Diagnostic.Kind.WARNING;
 
 public class BadProcessor extends AbstractProcessor {
 
+  private static final String CLASS_INTERFACE_ERROR_MESSAGE = "%s contains some bad code. You may want to consider cleaning it up";
+
   private Elements elementUtils;
   private Types typeUtils;
 
   private BadProcessorLogger logger;
 
-  @Override public synchronized void init(ProcessingEnvironment processingEnv) {
+  @Override
+  public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
 
     elementUtils = processingEnv.getElementUtils();
@@ -41,34 +44,39 @@ public class BadProcessor extends AbstractProcessor {
     Set<? extends Element> badAnnotatedElements = roundEnv.getElementsAnnotatedWith(Bad.class);
     for (Element badAnnotatedElement : badAnnotatedElements) {
       ElementKind kind = badAnnotatedElement.getKind();
-
-      logger.d("Kind: " + kind);
-
       Element enclosingElement = badAnnotatedElement.getEnclosingElement();
+      String output = "";
+
       switch (kind) {
         case CLASS:
         case INTERFACE:
-          logger.w(badAnnotatedElement.toString() + " contains some bad code. You may want to consider cleaning it up");
+          output = String.format(CLASS_INTERFACE_ERROR_MESSAGE, badAnnotatedElement.toString());
           break;
         case FIELD:
+          logger.w("There is some bad code in " + enclosingElement.toString() + "#" + badAnnotatedElement.toString() + ", you may want to consider cleaning it up.");
         case METHOD:
+        case CONSTRUCTOR:
           logger.w("There is some bad code in " + enclosingElement.toString() + "#" + badAnnotatedElement.toString() + ", you may want to consider cleaning it up.");
           break;
         default:
           logger.w("There appears to be bad code here " + enclosingElement.toString() + "#" + badAnnotatedElement.toString());
       }
+
+      logger.w(output);
     }
 
     return true;
   }
 
-  @Override public Set<String> getSupportedAnnotationTypes() {
+  @Override
+  public Set<String> getSupportedAnnotationTypes() {
     Set<String> supportTypes = new LinkedHashSet<>();
     supportTypes.add(Bad.class.getCanonicalName());
     return supportTypes;
   }
 
-  @Override public SourceVersion getSupportedSourceVersion() {
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.latestSupported();
   }
 
