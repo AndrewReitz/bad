@@ -10,8 +10,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,20 +19,15 @@ import static javax.tools.Diagnostic.Kind.WARNING;
 
 public class BadProcessor extends AbstractProcessor {
 
-  private static final String CLASS_INTERFACE_ERROR_MESSAGE = "%s contains some bad code. You may want to consider cleaning it up";
-
-  private Elements elementUtils;
-  private Types typeUtils;
+  private static final String CLASS_INTERFACE_ERROR_MESSAGE = "%s contains some bad code. You may want to consider cleaning it up.";
+  private static final String METHOD_CONSTRUCTOR_FIELD_ERROR_MESSAGE = "There is some bad code in %s#%s, you may want to consider cleaning it up.";
+  private static final String OTHER_ERROR_MESSAGE = "There appears to be bad code here %s#%s";
 
   private BadProcessorLogger logger;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
-
-    elementUtils = processingEnv.getElementUtils();
-    typeUtils = processingEnv.getTypeUtils();
-
     logger = new BadProcessorLogger(processingEnv.getMessager());
   }
 
@@ -45,21 +38,20 @@ public class BadProcessor extends AbstractProcessor {
     for (Element badAnnotatedElement : badAnnotatedElements) {
       ElementKind kind = badAnnotatedElement.getKind();
       Element enclosingElement = badAnnotatedElement.getEnclosingElement();
-      String output = "";
+      String output;
 
       switch (kind) {
         case CLASS:
         case INTERFACE:
-          output = String.format(CLASS_INTERFACE_ERROR_MESSAGE, badAnnotatedElement.toString());
+          output = String.format(CLASS_INTERFACE_ERROR_MESSAGE, badAnnotatedElement);
           break;
         case FIELD:
-          logger.w("There is some bad code in " + enclosingElement.toString() + "#" + badAnnotatedElement.toString() + ", you may want to consider cleaning it up.");
         case METHOD:
         case CONSTRUCTOR:
-          logger.w("There is some bad code in " + enclosingElement.toString() + "#" + badAnnotatedElement.toString() + ", you may want to consider cleaning it up.");
+          output = String.format(METHOD_CONSTRUCTOR_FIELD_ERROR_MESSAGE, enclosingElement, badAnnotatedElement);
           break;
         default:
-          logger.w("There appears to be bad code here " + enclosingElement.toString() + "#" + badAnnotatedElement.toString());
+          output = String.format(OTHER_ERROR_MESSAGE, enclosingElement, badAnnotatedElement);
       }
 
       logger.w(output);
@@ -68,15 +60,13 @@ public class BadProcessor extends AbstractProcessor {
     return true;
   }
 
-  @Override
-  public Set<String> getSupportedAnnotationTypes() {
+  @Override public Set<String> getSupportedAnnotationTypes() {
     Set<String> supportTypes = new LinkedHashSet<>();
     supportTypes.add(Bad.class.getCanonicalName());
     return supportTypes;
   }
 
-  @Override
-  public SourceVersion getSupportedSourceVersion() {
+  @Override public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.latestSupported();
   }
 
