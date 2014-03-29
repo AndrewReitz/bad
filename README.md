@@ -21,6 +21,8 @@ Maven:
 </dependency>
 ```
 
+Gradle:
+
 ```groovy
 compile com.andrewreitz.bad:bad:{Latest Version}
 ```
