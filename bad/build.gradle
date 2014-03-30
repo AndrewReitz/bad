@@ -5,12 +5,10 @@
  * as published by Sam Hocevar. See the COPYING file for more details.
  */
 
+ext {
+    PROJECT_NAME = "bad"
+    ARTIFACT_ID = "bad"
+}
+
 apply plugin: 'java'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-
-}
+apply from: file('../deploy.gradle')

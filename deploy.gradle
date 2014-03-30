@@ -1,0 +1,72 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            if (IS_DEV_BUILD) {
+                mavenLocal()
+            } else {
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                    repository(url: SONATYPE_URL) {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword)
+                    }
+
+                    pom.project {
+                        name PROJECT_NAME
+                        packaging 'jar'
+                        description 'Bad Annotations'
+                        artifactId = ARTIFACT_ID
+                        groupId GROUP
+                        version VERSION
+                        url 'https://github.com/pieces029/bad'
+
+                        scm {
+                            url 'scm:https://github.com/pieces029/bad'
+                            connection 'scm:git@github.com:pieces029/bad.git'
+                            developerConnection 'scm:git@github.com:pieces029/bad.git'
+                        }
+
+                        licenses {
+                            license {
+                                name 'Do What The Fuck You Want To Public License, Version 2'
+                                url 'http://www.wtfpl.net/'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'areitz'
+                                name 'Andrew Reitz'
+                                url "http://andrewreitz.com"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required { IS_RELEASE_BUILD && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+}

@@ -5,17 +5,29 @@
  * as published by Sam Hocevar. See the COPYING file for more details.
  */
 
-
-
-apply plugin: 'java'
-
-version = '1.0'
-group = 'com.andrewreitz.bad'
-
-repositories {
-    mavenCentral()
+ext {
+    SONATYPE_URL = ""
+    IS_DEV_BUILD = false
+    IS_RELEASE_BUILD = false
+    VERSION = '1.0.0'
+    GROUP = hasProperty("group") ? getProperty("group") : "com.andrewreitz.bad"
+}
+//set build variables based on build type (release, continuous integration, development)
+if (hasProperty("release")) {
+    IS_RELEASE_BUILD = true
+    SONATYPE_URL = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+} else if (hasProperty("snapshot")) {
+    VERSION += "-SNAPSHOT"
+    SONATYPE_URL = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+    IS_DEV_BUILD = true
 }
 
-dependencies {
+version = VERSION
+group = GROUP
 
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
