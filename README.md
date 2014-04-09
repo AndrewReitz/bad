@@ -17,14 +17,14 @@ Maven:
 <dependency>
     <groupId>com.andrewreitz.bad</groupId>
     <artifactId>bad</artifactId>
-    <version>{Latest Version}</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile com.andrewreitz.bad:bad:{Latest Version}
+compile com.andrewreitz.bad:bad:1.0.0
 ```
 
 ## Future Updates
