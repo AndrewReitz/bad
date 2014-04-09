@@ -23,10 +23,10 @@ if (hasProperty("release")) {
     IS_DEV_BUILD = true
 }
 
-version = VERSION
-group = GROUP
-
 allprojects {
+    version = VERSION
+    group = GROUP
+
     repositories {
         mavenCentral()
     }

@@ -28,7 +28,8 @@ compile com.andrewreitz.bad:bad:{Latest Version}
 ```
 
 ## Future Updates
-`@Prototype` Show that the code was prototype and `@Slow` slow your compilation down so you have more to screw around!
+* `@Prototype` Show that the code was prototype and should never be pushed to production until it's refactored
+* `@Slow` slow your compilation down so you have more to screw around!
 
 ## License
 

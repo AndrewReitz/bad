@@ -5,8 +5,6 @@
  * as published by Sam Hocevar. See the COPYING file for more details.
  */
 
-
-
 include ':bad', ':bad-sample'
 rootProject.name = 'bad-parent'
 
